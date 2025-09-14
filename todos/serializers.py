@@ -2,10 +2,19 @@ from .models import Todo
 from rest_framework import serializers
 
 class TodoSerializer(serializers.ModelSerializer):
+    status = serializers.ReadOnlyField()
+    
     class Meta:
         model = Todo
         fields = [
-            "id", "title", "description", "completed",
-            "due_date", "priority", "created_at", "updated_at"
+            "id",
+            "title",
+            "description",
+            "completed",
+            "due_date",
+            "priority",
+            "status",
+            "created_at",
+            "updated_at",
         ]
-        
+    

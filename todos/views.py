@@ -1,17 +1,19 @@
-from .models import Todo
-from core.utils import api_response
-from .serializers import TodoSerializer
 from rest_framework import generics, status, permissions
 from django.shortcuts import get_object_or_404
+from .models import Todo
+from .serializers import TodoSerializer
+from core.utils import api_response
 
 # ----------------------
-# List all todos / Create todo
+# List Todos
 # ----------------------
-class TodoListCreateView(generics.ListCreateAPIView):
+class TodoListView(generics.ListAPIView):
     serializer_class = TodoSerializer
-    permission_classes = [permissions.AllowAny]
-    queryset = Todo.objects.all()
-    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Todo.objects.filter(deleted_at__isnull=True).order_by("-created_at")
+
     def list(self, request, *args, **kwargs):
         todos = self.get_queryset()
         serializer = self.get_serializer(todos, many=True)
@@ -21,41 +23,60 @@ class TodoListCreateView(generics.ListCreateAPIView):
             data=serializer.data,
             status_code=status.HTTP_200_OK
         )
-    
+
+
+# ----------------------
+# Create Todo
+# ----------------------
+class TodoCreateView(generics.CreateAPIView):
+    serializer_class = TodoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        self.perform_create(serializer)
         return api_response(
             success=True,
             message="Todo created successfully",
             data=serializer.data,
             status_code=status.HTTP_201_CREATED
         )
-    
+
+
 # ----------------------
-# Retrieve / Update / Delete a todo
+# Retrieve Todo
 # ----------------------
-class TodoDetailView(generics.RetrieveUpdateDestroyAPIView):
+class TodoRetrieveView(generics.RetrieveAPIView):
     serializer_class = TodoSerializer
-    permission_classes = [permissions.AllowAny]
-    queryset = Todo.objects.all()
-    lookup_field = "id"
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Todo.objects.filter(deleted_at__isnull=True)
 
     def retrieve(self, request, *args, **kwargs):
-        todo = self.get_object()
-        serializer = self.get_serializer(todo)
+        todo = get_object_or_404(self.get_queryset(), pk=kwargs["id"])
         return api_response(
             success=True,
             message="Todo retrieved successfully",
-            data=serializer.data,
+            data=self.get_serializer(todo).data,
             status_code=status.HTTP_200_OK
         )
 
+
+# ----------------------
+# Update Todo
+# ----------------------
+class TodoUpdateView(generics.UpdateAPIView):
+    serializer_class = TodoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Todo.objects.filter(deleted_at__isnull=True)
+
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
-        todo = self.get_object()
-        serializer = self.get_serializer(todo, data=request.data, partial=partial)
+        todo = get_object_or_404(self.get_queryset(), pk=kwargs["id"])
+        serializer = self.get_serializer(todo, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return api_response(
@@ -65,32 +86,42 @@ class TodoDetailView(generics.RetrieveUpdateDestroyAPIView):
             status_code=status.HTTP_200_OK
         )
 
+
+# ----------------------
+# Delete Todo (Soft Delete)
+# ----------------------
+class TodoDeleteView(generics.DestroyAPIView):
+    serializer_class = TodoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Todo.objects.filter(deleted_at__isnull=True)
+
     def destroy(self, request, *args, **kwargs):
-        todo = self.get_object()
-        todo.delete()
+        todo = get_object_or_404(self.get_queryset(), pk=kwargs["id"])
+        todo.soft_delete()
         return api_response(
             success=True,
             message="Todo deleted successfully",
-            status_code=status.HTTP_204_NO_CONTENT
+            status_code=status.HTTP_200_OK
         )
-        
+
+
 # ----------------------
-# Toggle Todo completion
+# Toggle status
 # ----------------------
 class TodoToggleStatusView(generics.GenericAPIView):
     serializer_class = TodoSerializer
-    permission_classes = [permissions.AllowAny]
-    
-    def post(self, request, id):
-        todo = get_object_or_404(Todo, id=id)
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        todo = get_object_or_404(Todo, id=kwargs["id"], deleted_at__isnull=True)
         todo.completed = not todo.completed
-        todo.save()
-        serializer = self.get_serializer(todo)
+        todo.save(update_fields=["completed"])
+        response = {"id": todo.id, "completed": todo.completed}
         return api_response(
             success=True,
-            message="Todo status toggled successfully",
-            data=serializer.data,
+            message="Todo status toggled",
+            data=response,
             status_code=status.HTTP_200_OK
         )
-        
-        

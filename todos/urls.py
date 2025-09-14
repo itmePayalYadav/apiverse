@@ -1,14 +1,20 @@
 from django.urls import path
 from .views import (
-    TodoListCreateView,
-    TodoDetailView,
+    TodoListView,
+    TodoCreateView,
+    TodoRetrieveView,
+    TodoUpdateView,
+    TodoDeleteView,
     TodoToggleStatusView,
 )
 
 app_name = "todos"
 
 urlpatterns = [
-    path("", TodoListCreateView.as_view(), name="list-create-todo"),
-    path("<int:id>/", TodoDetailView.as_view(), name="todo-detail"),
-    path("<int:id>/toggle/", TodoToggleStatusView.as_view(), name="todo-toggle-status"),
+    path("", TodoListView.as_view(), name="todo-list"),
+    path("create/", TodoCreateView.as_view(), name="todo-create"),
+    path("<uuid:id>/", TodoRetrieveView.as_view(), name="todo-retrieve"),
+    path("<uuid:id>/update/", TodoUpdateView.as_view(), name="todo-update"),
+    path("<uuid:id>/delete/", TodoDeleteView.as_view(), name="todo-delete"),
+    path("<uuid:id>/toggle/", TodoToggleStatusView.as_view(), name="todo-toggle"),
 ]

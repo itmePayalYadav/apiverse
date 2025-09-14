@@ -1,5 +1,6 @@
 from django.db import models
 from core.models import BaseModel  
+from django.utils import timezone
 from core.constants import PRIORITY_CHOICES, PRIORITY_MEDIUM
 
 class Todo(BaseModel):

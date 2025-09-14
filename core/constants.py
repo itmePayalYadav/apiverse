@@ -19,9 +19,9 @@ LOGIN_TYPE_CHOICES = [
 ]
 
 # Todo List Priority
-PRIORITY_LOW = "low"
-PRIORITY_MEDIUM = "medium"
-PRIORITY_HIGH = "high"
+PRIORITY_LOW = "Low"
+PRIORITY_MEDIUM = "Medium"
+PRIORITY_HIGH = "High"
 
 PRIORITY_CHOICES = [
     (PRIORITY_LOW, "Low"),
