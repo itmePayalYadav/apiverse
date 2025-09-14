@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     
     # local apps
     'accounts',
-    'todos'
+    'todos',
+    'socials'
 ]
 
 # ----------------------------
