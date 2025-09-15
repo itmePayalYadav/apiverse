@@ -8,3 +8,5 @@ markdown
 sendgrid
 requests
 Pillow
+drf-spectacular 
+drf-spectacular-sidecar
