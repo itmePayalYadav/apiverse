@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "accounts",
     "todos",
     "socials",
-    "chats"
+    "chats",
+    "ecommerce"
 ]
 
 # ----------------------------
@@ -78,7 +79,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Apiverse API",
+    "TITLE": "APIVerse",
     "DESCRIPTION": "API documentation for your social media backend",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,

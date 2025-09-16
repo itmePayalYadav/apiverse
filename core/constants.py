@@ -28,3 +28,32 @@ PRIORITY_CHOICES = [
     (PRIORITY_MEDIUM, "Medium"),
     (PRIORITY_HIGH, "High"),
 ]
+
+# Coupon Types
+FLAT = "FLAT"
+PERCENTAGE = "PERCENTAGE"
+
+COUPON_TYPES = [
+    (FLAT, "Flat"),
+    (PERCENTAGE, "Percentage"),
+]
+
+# Order Status
+PENDING = "PENDING"
+COMPLETED = "COMPLETED"
+CANCELLED = "CANCELLED"
+
+ORDER_STATUS = [
+    (PENDING, "Pending"),
+    (COMPLETED, "Completed"),
+    (CANCELLED, "Cancelled"),
+]
+
+# Payment Providers
+RAZORPAY = "RAZORPAY"
+STRIPE = "STRIPE"
+
+PAYMENT_PROVIDERS = [
+    (RAZORPAY, "Razorpay"),
+    (STRIPE, "Stripe"),
+]
