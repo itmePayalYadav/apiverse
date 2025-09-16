@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "accounts",
     "todos",
     "socials",
+    "chats"
 ]
 
 # ----------------------------
@@ -81,6 +82,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for your social media backend",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "SECURITY": [{"JWTAuth": []}],
 }
 
 # ----------------------------
