@@ -1,5 +1,6 @@
 import urllib.parse
 from rest_framework import generics, status, permissions
+from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from django.utils import timezone
 from django.conf import settings
@@ -120,7 +121,11 @@ class LoginView(generics.GenericAPIView):
 # Logout
 # ----------------------
 class LogoutView(generics.GenericAPIView):
+    serializer_class = None
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        return None 
 
     def post(self, request):
         request.user.refresh_token = None
@@ -396,7 +401,7 @@ class GoogleLoginCallbackView(generics.GenericAPIView):
 # ----------------------
 # GitHub OAuth Login
 # ----------------------
-class GitHubLoginView(generics.GenericAPIView):
+class GitHubLoginView(APIView):
     permission_classes = [permissions.AllowAny]
     
     def get(self, request):
